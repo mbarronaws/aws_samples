@@ -84,6 +84,7 @@ def lambda_handler(event, context):
     if (event['RequestType'] == "Create"): 
         if (checkIfExists(event['CacheClusterId']) == false):
             status = createCluster(event['ClusterInfo'])
+            # add a check or sleep timer for cluster creation to finish
             loadData(event['ClusterInfo'], event['ConfigData'])
             return status
         else:
@@ -94,10 +95,12 @@ def lambda_handler(event, context):
     if (event['RequestType'] == "Update"):
         if (checkIfExists(event['CacheClusterId']) == true):
             status = updateCluster(event['ClusterInfo'])
+            # add check or sleep timer for cluster update to finish
             loadData(event['ClusterInfo'], event['ConfigData'])
             return status
         else: 
             status = createCluster(event['ClusterInfo'])
+            # add check or sleep timer for cluster update to finish
             loadData(event['ClusterInfo'], event['ConfigData'])
             return status
         
