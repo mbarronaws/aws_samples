@@ -66,9 +66,9 @@ def updateCluster(ClusterInfo):
         status = "FAILURE"
         return status
     
-def deleteCluster(CacheClusterId):
+def deleteCluster(MyCacheClusterId):
     response = client.delete_cache_cluster(
-    CacheClusterId=CacheClusterId,
+    CacheClusterId=MyCacheClusterId,
     FinalSnapshotIdentifier='final-shapshot' + '-' + str(datetime.now())
     )
     
