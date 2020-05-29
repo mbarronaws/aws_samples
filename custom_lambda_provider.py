@@ -74,9 +74,9 @@ def deleteCluster(MyCacheClusterId):
     
 def loadData(ClusterInfo, ConfigData): 
     r = redis.Redis(
-    host=ClusterInfo['hostname'],
+    host=ClusterInfo['ClusterEndpoint']
     port=123, 
-    password=ClusterInfo['password']) # in practice, use secret strings / secrets manager and retrieve these values externally
+    password=ClusterInfo['AuthToken']) # in practice, use secret strings / secrets manager and retrieve these values externally
     r.set(ConfigData) # load a dictionary of key/value pairs
 
 def lambda_handler(event, context):
