@@ -13,10 +13,7 @@ def checkIfExists(MyCacheClusterId):
         ShowCacheNodeInfo=True, 
         ShowCacheClustersNotInReplicationGroups=True 
         )
-        if response['CacheClusterId'] == MyCacheClusterId:
-            return True
-        else:
-            return False
+        return True
     except Exception as e:
         print(e)
         return False
