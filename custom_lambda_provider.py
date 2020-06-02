@@ -3,8 +3,6 @@ import boto3
 import datetime
 import redis
 
-client = boto3.client('elasticache')
-
 def checkIfExists(MyCacheClusterId):
     try: 
         response = client.describe_cache_clusters(
@@ -14,9 +12,9 @@ def checkIfExists(MyCacheClusterId):
         ShowCacheClustersNotInReplicationGroups=True 
         )
         if response['CacheClusterId'] == MyCacheClusterId:
-            return true
+            return True
     except: 
-        return false
+        return False
     
 def createCluster(ClusterInfo):
     try:
@@ -55,56 +53,56 @@ def updateCluster(ClusterInfo):
         PreferredMaintenanceWindow=ClusterInfo['PreferredMaintenanceWindow'],
         CacheParameterGroupName=ClusterInfo['CacheParameterGroupName'],
         ApplyImmediately=True,
-        EngineVersion=EngineVersion=ClusterInfo['EngineVersion'],
+        EngineVersion=ClusterInfo['EngineVersion'],
         AutoMinorVersionUpgrade=False,
         CacheNodeType=ClusterInfo['CacheNodeType'],
         AuthToken=ClusterInfo['AuthToken']
         )
         status = "SUCCESS"
         return status
-    except: 
+    except:
+        print(response)
         status = "FAILURE"
         return status
     
-def deleteCluster(MyCacheClusterId):
+def deleteCluster(CacheClusterId):
     response = client.delete_cache_cluster(
-    CacheClusterId=MyCacheClusterId,
+    CacheClusterId=CacheClusterId,
     FinalSnapshotIdentifier='final-shapshot' + '-' + str(datetime.now())
     )
     
 def loadData(ClusterInfo, ConfigData): 
     r = redis.Redis(
-    host=ClusterInfo['ClusterEndpoint']
+    host=ClusterInfo['hostname'],
     port=123, 
-    password=ClusterInfo['AuthToken']) # in practice, use secret strings / secrets manager and retrieve these values externally
+    password=ClusterInfo['password']) # in practice, use secret strings / secrets manager and retrieve these values externally
     r.set(ConfigData) # load a dictionary of key/value pairs
 
 def lambda_handler(event, context):
+    client = boto3.client('elasticache')
+    ClusterInfo = event['ResourceProperties']['ClusterInfo']
     # handle each event, create, update, delete with different logic
     if (event['RequestType'] == "Create"): 
-        if (checkIfExists(event['CacheClusterId']) == false):
-            status = createCluster(event['ClusterInfo'])
-            # add a check or sleep timer for cluster creation to finish
-            loadData(event['ClusterInfo'], event['ConfigData'])
+        if (checkIfExists(ClusterInfo['CacheClusterId']) == False):
+            status = createCluster(ClusterInfo)
+            #loadData(ConfigData)
             return status
         else:
             status = "SUCCESS"
-            loadData(event['ClusterInfo'], event['ConfigData'])
+            #loadData(ConfigData)
             return status
         
     if (event['RequestType'] == "Update"):
-        if (checkIfExists(event['CacheClusterId']) == true):
-            status = updateCluster(event['ClusterInfo'])
-            # add check or sleep timer for cluster update to finish
-            loadData(event['ClusterInfo'], event['ConfigData'])
+        if (checkIfExists(ClusterInfo['CacheClusterId']) == True):
+            status = updateCluster(ClusterInfo)
+            #loadData(ConfigData)
             return status
         else: 
-            status = createCluster(event['ClusterInfo'])
-            # add check or sleep timer for cluster update to finish
-            loadData(event['ClusterInfo'], event['ConfigData'])
+            status = createCluster(ClusterInfo)
+            #loadData(ConfigData)
             return status
         
     if (event['RequestType'] == "Delete"): 
             status = "SUCCESS"
-            deleteCluster(event['ClusterInfo'])
+            deleteCluster(ClusterInfo)
             return status
