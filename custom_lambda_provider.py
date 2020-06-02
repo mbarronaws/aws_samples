@@ -18,7 +18,8 @@ def checkIfExists(MyCacheClusterId):
         else:
             return False
     except Exception as e:
-        return e
+        print(e)
+        return False
 
 def createCluster(ClusterInfo):
     try:
