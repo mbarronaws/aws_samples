@@ -9,7 +9,7 @@ def checkIfExists(MyCacheClusterId):
     try: 
         response = client.describe_cache_clusters(
         CacheClusterId=MyCacheClusterId,
-        MaxRecords=1,
+        MaxRecords=99,
         ShowCacheNodeInfo=True, 
         ShowCacheClustersNotInReplicationGroups=True 
         )
