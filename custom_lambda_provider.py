@@ -6,17 +6,19 @@ import redis
 client = boto3.client('elasticache')
 
 def checkIfExists(MyCacheClusterId):
-    try:
+    try: 
         response = client.describe_cache_clusters(
         CacheClusterId=MyCacheClusterId,
-        MaxRecords=123,
-        ShowCacheNodeInfo=True,
-        ShowCacheClustersNotInReplicationGroups=True
+        MaxRecords=1,
+        ShowCacheNodeInfo=True, 
+        ShowCacheClustersNotInReplicationGroups=True 
         )
         if response['CacheClusterId'] == MyCacheClusterId:
             return True
-    except:
-        return False
+        else:
+            return False
+    except Exception as e:
+        return e
 
 def createCluster(ClusterInfo):
     try:
