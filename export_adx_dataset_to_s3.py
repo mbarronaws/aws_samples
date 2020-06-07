@@ -95,7 +95,6 @@ def startJob(JobId):
 def lambda_handler(event, context):
     DataSetId = event['DataSetId']
     DataLakeRawBucket = event['DataLakeRawBucket']
-    DataSetS3Key = event['DataSetS3Key']
     
     MyDataSetRevisions = listDataSetRevisions(DataSetId)
     MyDataSetRevisionsL = []
@@ -104,6 +103,7 @@ def lambda_handler(event, context):
         MyDataSetRevisionsL.append(DataSetRevision['Id'])
         
     MyRevisionAssets = listRevisionAssets(DataSetId, MyDataSetRevisionsL[0])
+    MyRevisionAssetS3Key = MyRevisionAssets['Assets'][0]['Name']
     MyRevisionAssetId = MyRevisionAssets['Assets'][0]['Id']
         
     JobConfig = {
@@ -112,7 +112,7 @@ def lambda_handler(event, context):
                 {
                     'AssetId': MyRevisionAssetId,
                     'Bucket': DataLakeRawBucket,
-                    'Key': DataSetS3Key
+                    'Key': MyRevisionAssetS3Key
                 },
             ],
             'DataSetId': DataSetId,
