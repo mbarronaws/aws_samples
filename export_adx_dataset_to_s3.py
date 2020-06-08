@@ -11,8 +11,7 @@ def getDataSet(DataSetId):
         )
         return response
     except Exception as e: 
-        print(e)
-        return 0
+        return e
     
 def getRevision(DataSetId, RevisionId):
     try:
@@ -22,8 +21,7 @@ def getRevision(DataSetId, RevisionId):
         )
         return response
     except Exception as e: 
-        print(e)
-        return 0
+        return e
     
 def getAsset(AssetId, DataSetId, RevisionId):
     try:
@@ -34,8 +32,7 @@ def getAsset(AssetId, DataSetId, RevisionId):
         )
         return response
     except Exception as e: 
-        print(e)
-        return 0
+        return e
     
 def listRevisionAssets(DataSetId, RevisionId):
     try: 
@@ -46,8 +43,7 @@ def listRevisionAssets(DataSetId, RevisionId):
         )
         return response
     except Exception as e: 
-        print(e)
-        return 0
+        return e
         
 def listDataSets():
     try:
@@ -57,8 +53,7 @@ def listDataSets():
         )
         return response
     except Exception as e: 
-        print(e)
-        return 0
+        return e
         
 def listDataSetRevisions(DataSetId):
     try:
@@ -68,8 +63,7 @@ def listDataSetRevisions(DataSetId):
         )
         return response
     except Exception as e: 
-        print(e)
-        return 0
+        return e
     
 def createJob(JobConfiguration):
     try:
@@ -79,8 +73,7 @@ def createJob(JobConfiguration):
         )
         return response
     except Exception as e: 
-        print(e)
-        return 0
+        return e
     
 def startJob(JobId):
     try:
@@ -89,8 +82,7 @@ def startJob(JobId):
         )
         return response
     except Exception as e: 
-        print(e)
-        return 0
+        return e
 
 def lambda_handler(event, context):
     DataSetId = event['DataSetId']
@@ -123,6 +115,6 @@ def lambda_handler(event, context):
     try:
         NewExportJob = createJob(JobConfig)
         startJob(NewExportJob['Id'])
+        return "SUCCESS"
     except Exception as e:
-        print(e)
-        return 0
+        return e
