@@ -1,6 +1,5 @@
 import json
 import boto3 
-import datetime
 
 client = boto3.client('dataexchange')
 
