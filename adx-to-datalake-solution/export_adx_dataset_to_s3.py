@@ -25,9 +25,9 @@ def getRevision(DataSetId, RevisionId):
 def getAsset(AssetId, DataSetId, RevisionId):
     try:
         response = client.get_asset(
-        AssetId='string',
-        DataSetId='string',
-        RevisionId='string'
+        AssetId=AssetId,
+        DataSetId=DataSetId,
+        RevisionId=RevisionId
         )
         return response
     except Exception as e: 
