@@ -84,7 +84,7 @@ def startJob(JobId):
         return e
 
 def lambda_handler(event, context):
-    DataSetId = event['DataSetId']
+    DataSetId = event['Id']
     DataLakeRawBucket = event['DataLakeRawBucket']
     
     MyDataSetRevisions = listDataSetRevisions(DataSetId)
