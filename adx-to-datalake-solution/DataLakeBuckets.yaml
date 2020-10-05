@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Creates raw, curated, and query results S3 buckets
+Parameters:
+  DataLakeRawBucketName:
+    Type: String
+    Description: S3 bucket where raw data is ingested
+  DataLakeCuratedBucketName:
+    Type: String
+    Description: S3 bucket where transformed data is stored
+  AthenaResultsBucketName:
+    Type: String
+    Description: S3 bucket for Athena query results
+Resources:
+  DataLakeRawBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref DataLakeRawBucketName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+  DataLakeCuratedBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref DataLakeCuratedBucketName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+  AthenaResultsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref AthenaResultsBucketName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true

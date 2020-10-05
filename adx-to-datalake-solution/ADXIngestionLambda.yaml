@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Creates lambda function to ingest datasets from ADX to an S3 raw bucket
+Parameters:
+  LambdaRole:
+    Type: String
+    Description: 'IAM execution role arn'
+  CodeLocation:
+    Type: String
+    Description: 'S3 bucket where ingestion code is located'
+  Code:
+    Type: String
+    Description: 'S3 key for corresponding ingestion code'
+Resources:
+  ADXToDataLakeIngestion:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: lambda_handler
+      Role: !Ref LambdaRole
+      Code:
+        S3Bucket: !Ref CodeLocation
+        S3Key: !Ref Code
+      Runtime: python3.8
+      Timeout: 60
