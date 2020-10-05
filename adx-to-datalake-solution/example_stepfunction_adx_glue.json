@@ -7,13 +7,13 @@
       "Type": "Task",
       "Resource": "<ingestion lambda function arn>",
       "OutputPath": "$",
-      "ResultPath": "$.DataPipelineConfig.Results",
+      "ResultPath": "$.StepFunction.Results",
       "Parameters": {
-        "DataSetId.$": "$.DataPipelineConfig.DataSetId",
-        "DataLakeRawBucket.$": "$.DataPipelineConfig.DataLakeRawBucket",
-        "RawCrawlerName.$": "$.DataPipelineConfig.RawCrawlerName",
-        "ConvertAndCurateJobName.$": "$.DataPipelineConfig.ConvertAndCurateJobName",
-        "CuratedCrawlerName.$": "$.DataPipelineConfig.CuratedCrawlerName"
+        "DataSetId.$": "$.Id",
+        "DataLakeRawBucket.$": "$.StepFunction.DataLakeRawBucket",
+        "RawCrawlerName.$": "$.StepFunction.RawCrawlerName",
+        "ConvertAndCurateJobName.$": "$.StepFunction.ConvertAndCurateJobName",
+        "CuratedCrawlerName.$": "$.StepFunction.CuratedCrawlerName"
       },
       "Next": "CrawlRawDataSet"
     },
@@ -22,9 +22,9 @@
       "Type": "Task",
       "Resource": "<glue executor lambda function arn>",
       "OutputPath": "$",
-      "ResultPath": "$.DataPipelineConfig.Results",
+      "ResultPath": "$.StepFunction.Results",
       "Parameters": {
-        "CrawlerName.$": "$.DataPipelineConfig.RawCrawlerName"
+        "CrawlerName.$": "$.StepFunction.RawCrawlerName"
       },
       "Next": "ConvertAndCurateDataSet"
     },
@@ -33,9 +33,9 @@
       "Type": "Task",
       "Resource": "arn:aws:states:::glue:startJobRun.sync",
       "OutputPath": "$",
-      "ResultPath": "$.DataPipelineConfig.Results",
+      "ResultPath": "$.StepFunction.Results",
       "Parameters": {
-        "JobName.$": "$.DataPipelineConfig.ConvertAndCurateJobName"
+        "JobName.$": "$.StepFunction.ConvertAndCurateJobName"
       },
       "Next": "CrawlCuratedDataSet"
     },
@@ -43,10 +43,10 @@
       "Comment": "Triggers the Glue crawler against the curated dataset",
       "Type": "Task",
       "OutputPath": "$",
-      "ResultPath": "$.DataPipelineConfig.Results",
+      "ResultPath": "$.StepFunction.Results",
       "Resource": "<glue executor lambda function arn>",
       "Parameters": {
-        "CrawlerName.$": "$.DataPipelineConfig.CuratedCrawlerName"
+        "CrawlerName.$": "$.StepFunction.CuratedCrawlerName"
       },
       "End": true
     }
