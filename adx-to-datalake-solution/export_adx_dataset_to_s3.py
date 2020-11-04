@@ -1,5 +1,6 @@
 import json
-import boto3 
+import boto3
+import datetime
 
 client = boto3.client('dataexchange')
 
@@ -9,9 +10,9 @@ def getDataSet(DataSetId):
         DataSetId=DataSetId
         )
         return response
-    except Exception as e: 
+    except Exception as e:
         return e
-    
+
 def getRevision(DataSetId, RevisionId):
     try:
         response = client.get_revision(
@@ -19,31 +20,31 @@ def getRevision(DataSetId, RevisionId):
         RevisionId=RevisionId
         )
         return response
-    except Exception as e: 
+    except Exception as e:
         return e
-    
+
 def getAsset(AssetId, DataSetId, RevisionId):
     try:
         response = client.get_asset(
-        AssetId=AssetId,
-        DataSetId=DataSetId,
-        RevisionId=RevisionId
+        AssetId='string',
+        DataSetId='string',
+        RevisionId='string'
         )
         return response
-    except Exception as e: 
+    except Exception as e:
         return e
-    
+
 def listRevisionAssets(DataSetId, RevisionId):
-    try: 
+    try:
         response = client.list_revision_assets(
         DataSetId=DataSetId,
         MaxResults=123,
         RevisionId=RevisionId
         )
         return response
-    except Exception as e: 
+    except Exception as e:
         return e
-        
+
 def listDataSets():
     try:
         response = client.list_data_sets(
@@ -51,9 +52,9 @@ def listDataSets():
         Origin="ENTITLED"
         )
         return response
-    except Exception as e: 
+    except Exception as e:
         return e
-        
+
 def listDataSetRevisions(DataSetId):
     try:
         response = client.list_data_set_revisions(
@@ -61,9 +62,9 @@ def listDataSetRevisions(DataSetId):
         MaxResults=123
         )
         return response
-    except Exception as e: 
+    except Exception as e:
         return e
-    
+
 def createJob(JobConfiguration):
     try:
         response = client.create_job(
@@ -71,32 +72,32 @@ def createJob(JobConfiguration):
         Type='EXPORT_ASSETS_TO_S3'
         )
         return response
-    except Exception as e: 
+    except Exception as e:
         return e
-    
+
 def startJob(JobId):
     try:
         response = client.start_job(
         JobId=JobId
         )
         return response
-    except Exception as e: 
+    except Exception as e:
         return e
 
 def lambda_handler(event, context):
     DataSetId = event['Id']
-    DataLakeRawBucket = event['DataLakeRawBucket']
-    
+    DataLakeRawBucket = ""
+
     MyDataSetRevisions = listDataSetRevisions(DataSetId)
     MyDataSetRevisionsL = []
-    
+
     for DataSetRevision in MyDataSetRevisions['Revisions']:
         MyDataSetRevisionsL.append(DataSetRevision['Id'])
-        
-    MyRevisionAsset = listRevisionAssets(DataSetId, MyDataSetRevisionsL[0])
-    MyRevisionAssetId = MyRevisionAsset['Assets'][0]['Id']
-    MyRevisionAssetS3Key = MyRevisionAsset['Assets'][0]['Name']
-        
+
+    MyRevisionAssets = listRevisionAssets(DataSetId, MyDataSetRevisionsL[0])
+    MyRevisionAssetS3Key = MyRevisionAssets['Assets'][0]['Name']
+    MyRevisionAssetId = MyRevisionAssets['Assets'][0]['Id']
+
     JobConfig = {
         'ExportAssetsToS3': {
             'AssetDestinations': [
@@ -110,7 +111,7 @@ def lambda_handler(event, context):
             'RevisionId': MyDataSetRevisionsL[0]
             }
         }
-        
+
     try:
         NewExportJob = createJob(JobConfig)
         startJob(NewExportJob['Id'])
